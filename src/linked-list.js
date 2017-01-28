@@ -9,6 +9,7 @@ class LinkedList {
 
   append(data) {
     var newNode;
+
     if (this.length === 0) {
       newNode = new Node(data, null, null);
       this._head = newNode;
@@ -19,6 +20,7 @@ class LinkedList {
 
     this.length++;
     this._tail = newNode;   
+    return this;
   }
 
   head() {
@@ -42,13 +44,24 @@ class LinkedList {
   }
 
   insertAt(index, data) {
-    var prevNode = this._at(index - 1);
-    var nextNode = this._at(index);
-    var newNode = new Node(data, prevNode, nextNode);
+    var prevNode;
+    var nextNode;
+    var newNode;
 
-    prevNode.next = newNode;
-    nextNode.prev = newNode;
+    if (this.length === 0) {
+      newNode = new Node(data, null, null);
+      this._head = newNode;
+      this._tail = newNode;
+    } else {
+      prevNode = this._at(index - 1);
+      nextNode = this._at(index);
+      newNode = new Node(data, prevNode, nextNode);
+
+      prevNode.next = newNode;
+      nextNode.prev = newNode;
+    }
     this.length++;
+    return this;
   }
 
   isEmpty() {
@@ -63,13 +76,65 @@ class LinkedList {
     this.length = 0;
     this._head = null;
     this._tail = null;
+    return this;
   }
 
-  deleteAt(index) {}
+  deleteAt(index) {
+    var nextNode;
+    var prevNode;
+    var currentNode;
+    var tempNode;
 
-  reverse() {}
+    if (index === 0 && this.length !== 1) {
+      tempNode = this._head.next;
+      tempNode.prev = null;
+      this._head = tempNode;
+    } else if (index === 0 && this.length === 1) {
+      this._head = null;
+      this._tail = null;
+    } else if (index === this.length - 1) {
+      tempNode = this._tail.prev;
+      tempNode.next = null;
+      this._tail = tempNode;
+    } else {
+      currentNode = this._at(index);
+      prevNode = currentNode.prev;
+      nextNode = currentNode.next;
+      prevNode.next = nextNode;
+      nextNode.prev = prevNode;
+    }
+    this.length--;
+    return this;
+  }
 
-  indexOf(data) {}
+  reverse() {
+    var currentNode = this._head;
+    var tempNode;
+
+    while (currentNode !== null) {
+      tempNode = currentNode.next;
+      currentNode.next = currentNode.prev;
+      currentNode.prev = tempNode;
+      currentNode = tempNode;
+    } 
+
+    currentNode = this._tail;
+    this._tail = this._head;
+    this._head = currentNode;
+    return this;
+  }
+
+  indexOf(data) {
+    var currentNode = this._head;
+    for (var i = 0; i < this.length; i++) {
+      if (currentNode.data === data) {
+        return i;
+      } else {
+        currentNode = currentNode.next;
+      }
+    }
+    return -1;
+  }
 }
 
 module.exports = LinkedList;
