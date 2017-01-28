@@ -1,10 +1,4 @@
-class Node {
-    constructor(data = null, prev = null, next = null) {
-        this.data = data;
-        this.prev = prev;
-        this.next = next;
-    }
-}
+const Node = require('./node');
 
 class LinkedList {
   constructor() {
@@ -14,10 +8,17 @@ class LinkedList {
   }
 
   append(data) {
+    var newNode;
+    if (this.length === 0) {
+      newNode = new Node(data, null, null);
+      this._head = newNode;
+    } else {
+      newNode = new Node(data, this._tail, null);
+      this._tail.next = newNode;
+    }
+
     this.length++;
-    var newNode = new Node(data, null, null);
-    this._head = newNode;
-    this._tail = newNode;
+    this._tail = newNode;   
   }
 
   head() {
@@ -28,15 +29,27 @@ class LinkedList {
     return this._tail.data;
   }
 
-  at(index) {
+  _at(index) {
     var currentNode = this._head;
     for (var i = 0; i < index; i++) {   //iterate through linked list
       currentNode = currentNode.next;
     }
-    return currentNode.data;
+    return currentNode;
   }
 
-  insertAt(index, data) {}
+  at(index) {
+    return this._at(index).data;
+  }
+
+  insertAt(index, data) {
+    var prevNode = this._at(index - 1);
+    var nextNode = this._at(index);
+    var newNode = new Node(data, prevNode, nextNode);
+
+    prevNode.next = newNode;
+    nextNode.prev = newNode;
+    this.length++;
+  }
 
   isEmpty() {
     if (this.length !== 0) {
@@ -46,7 +59,11 @@ class LinkedList {
     }
   }
 
-  clear() {}
+  clear() {
+    this.length = 0;
+    this._head = null;
+    this._tail = null;
+  }
 
   deleteAt(index) {}
 
